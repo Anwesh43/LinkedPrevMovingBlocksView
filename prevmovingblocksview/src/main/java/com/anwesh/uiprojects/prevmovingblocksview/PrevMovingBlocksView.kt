@@ -225,4 +225,13 @@ class PrevMovingBlocksView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : PrevMovingBlocksView {
+            val view : PrevMovingBlocksView = PrevMovingBlocksView(activity)
+            activity.setContentView(view)
+            return view 
+        }
+    }
 }
