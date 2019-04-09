@@ -15,7 +15,7 @@ import android.graphics.Color
 import android.content.Context
 
 val nodes : Int = 5
-val squares : Int = 4
+val squares : Int = 10
 val scGap : Float = 0.05f
 val scDiv : Double = 0.51
 val strokeFactor : Int = 90
@@ -24,6 +24,7 @@ val foreColor : Int = Color.parseColor("#673AB7")
 val backColor : Int = Color.parseColor("#BDBDBD")
 val rotDeg : Float = 180f
 val parts : Int = 2
+val delay : Long = 20
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
@@ -53,23 +54,23 @@ fun Canvas.drawPMBNode(i : Int, scale : Float, paint : Paint) {
     val gap : Float = h / (nodes + 1)
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
-    val size : Float = gap / sizeFactor
+    val size : Float = w
     paint.color = foreColor
     paint.strokeWidth = Math.min(w, h) / strokeFactor
     paint.strokeCap = Paint.Cap.ROUND
-    val xGap : Float = (2 * size) / squares
+    val xGap : Float = (size) / squares
     save()
     translate(w / 2, gap * (i + 1))
     rotate(rotDeg * sc2)
     var x : Float = -xGap
-    var y : Float = xGap
+    var y : Float = 0f
     for (j in 0..(squares - 1)) {
         val sc1j : Float = sc1.divideScale(j, squares).divideScale(0, parts)
         val sc2j : Float = sc1.divideScale(j, squares).divideScale(1, parts)
         val xDiff = xGap * sc1j
         val yDiff = xGap * sc2j * j.sjf()
         save()
-        translate(-size, 0f)
+        translate(-size / 2, 0f)
         drawMovingSquare(j, xGap, x + xDiff, y - yDiff, paint)
         restore()
         x += xDiff
@@ -122,7 +123,7 @@ class PrevMovingBlocksView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
