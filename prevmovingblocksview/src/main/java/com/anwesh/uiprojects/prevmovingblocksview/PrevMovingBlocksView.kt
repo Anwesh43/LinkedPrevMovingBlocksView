@@ -34,3 +34,38 @@ fun Float.mirrorScale(a : Int, b : Int) : Float  {
     return (1 - k ) * a.inverse() + k * b.inverse()
 }
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorScale(a, b) * dir * scGap
+fun Int.sf() : Float = 1f - 2 * this
+fun Int.sjf() : Float = (this % 2).sf()
+fun Int.mirror() : Float = 1f - this
+fun Int.jMirror() : Float = (this % 2).mirror()
+
+fun Canvas.drawMovingSquare(j : Int, size : Float, sc : Float, paint : Paint) {
+    val sc1 : Float = sc.divideScale(0, parts)
+    val sc2 : Float = sc.divideScale(1, parts)
+    save()
+    translate(-size + j * size + size * sc1, size * j.jMirror() - size * j.sjf() * sc2)
+    drawRect(RectF(0f, 0f, size, size), paint)
+    restore()
+}
+
+fun Canvas.drawPMBNode(i : Int, scale : Float, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = h / (nodes + 1)
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
+    val size : Float = gap / sizeFactor
+    paint.color = foreColor
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    paint.strokeCap = Paint.Cap.ROUND
+    save()
+    translate(w / 2, gap * (i + 1))
+    rotate(rotDeg * sc2)
+    for (j in 0..(squares - 1)) {
+        save()
+        translate(-size, 0f)
+        drawMovingSquare(j, (2 * size) / squares, sc1.divideScale(j, squares), paint)
+        restore()
+    }
+    restore()
+}
