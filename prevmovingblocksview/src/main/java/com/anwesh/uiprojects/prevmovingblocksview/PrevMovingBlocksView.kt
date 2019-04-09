@@ -202,4 +202,26 @@ class PrevMovingBlocksView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : PrevMovingBlocksView) {
+
+        private val animator : Animator = Animator(view)
+        private val pmb : PrevMovingBlocks = PrevMovingBlocks(0)
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            pmb.draw(canvas, paint)
+            animator.animate {
+                pmb.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            pmb.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
