@@ -73,15 +73,16 @@ fun Canvas.drawPMBNode(i : Int, scale : Float, paint : Paint) {
 class PrevMovingBlocksView(ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val renderer : Renderer = Renderer(this)
 
     override fun onDraw(canvas : Canvas) {
-
+        renderer.render(canvas, paint)
     }
 
     override fun onTouchEvent(event : MotionEvent) : Boolean {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-
+            MotionEvent.ACTION_DOWN ->  {
+                renderer.handleTap()
             }
         }
         return true
@@ -208,7 +209,7 @@ class PrevMovingBlocksView(ctx : Context) : View(ctx) {
         private val animator : Animator = Animator(view)
         private val pmb : PrevMovingBlocks = PrevMovingBlocks(0)
 
-        fun draw(canvas : Canvas, paint : Paint) {
+        fun render(canvas : Canvas, paint : Paint) {
             canvas.drawColor(backColor)
             pmb.draw(canvas, paint)
             animator.animate {
