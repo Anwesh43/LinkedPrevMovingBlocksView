@@ -39,11 +39,10 @@ fun Int.sjf() : Float = (this % 2).sf()
 fun Int.mirror() : Float = 1f - this
 fun Int.jMirror() : Float = (this % 2).mirror()
 
-fun Canvas.drawMovingSquare(j : Int, size : Float, sc : Float, paint : Paint) {
-    val sc1 : Float = sc.divideScale(0, parts)
-    val sc2 : Float = sc.divideScale(1, parts)
+fun Canvas.drawMovingSquare(j : Int, size : Float, x: Float,  y : Float, paint : Paint) {
+
     save()
-    translate(-size + j * size + size * sc1, size * j.jMirror() - size * j.sjf() * sc2)
+    translate(x, y)
     drawRect(RectF(0f, 0f, size, size), paint)
     restore()
 }
@@ -58,14 +57,23 @@ fun Canvas.drawPMBNode(i : Int, scale : Float, paint : Paint) {
     paint.color = foreColor
     paint.strokeWidth = Math.min(w, h) / strokeFactor
     paint.strokeCap = Paint.Cap.ROUND
+    val xGap : Float = (2 * size) / squares
     save()
     translate(w / 2, gap * (i + 1))
     rotate(rotDeg * sc2)
+    var x : Float = -xGap
+    var y : Float = xGap
     for (j in 0..(squares - 1)) {
+        val sc1j : Float = sc1.divideScale(j, squares).divideScale(0, parts)
+        val sc2j : Float = sc1.divideScale(j, squares).divideScale(1, parts)
+        val xDiff = xGap * sc1j
+        val yDiff = xGap * sc2j * j.sjf()
         save()
         translate(-size, 0f)
-        drawMovingSquare(j, (2 * size) / squares, sc1.divideScale(j, squares), paint)
+        drawMovingSquare(j, xGap, x + xDiff, y - yDiff, paint)
         restore()
+        x += xDiff
+        y -= yDiff
     }
     restore()
 }
@@ -231,7 +239,7 @@ class PrevMovingBlocksView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : PrevMovingBlocksView {
             val view : PrevMovingBlocksView = PrevMovingBlocksView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
